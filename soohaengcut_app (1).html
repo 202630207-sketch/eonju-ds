@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수행컷 - 수행평가 완벽 대비 플랫폼</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gmarket+Sans:wght@700&family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // Samsung One UI style palette
+                        darkbg: '#000000',
+                        darkcard: '#121214',
+                        darkpanel: '#1e1e22',
+                        darkborder: '#2a2a30',
+                        
+                        lightbg: '#ffffff',
+                        lightcard: '#f4f4f7',
+                        lightpanel: '#e8eaed',
+                        lightborder: '#d1d5db',
+
+                        accentGreen: '#10b981',
+                        accentGreenHover: '#059669',
+                        accentBlue: '#3b82f6',
+                        accentBlueHover: '#2563eb',
+                    },
+                    fontFamily: {
+                        sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+                        title: ['Gmarket Sans', 'Pretendard', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Smooth Fade In Entrance */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Hover Scale 5% Exactly with smooth spring effect */
+        .btn-scale {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, color 0.2s ease;
+            box-shadow: none !important; /* Strictly no glow effects */
+        }
+        .btn-scale:hover {
+            transform: scale(1.05);
+        }
+        .btn-scale:active {
+            transform: scale(0.98);
+        }
+
+        /* Color transitions when switching modes */
+        body, main, header, section, div, h1, h2, h3, h4, p, input, button {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Samsung UI toggle button rotation animation */
+        .theme-toggle-icon {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .theme-toggle-btn:hover .theme-toggle-icon {
+            transform: rotate(25deg) scale(1.1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #88888840;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-lightbg text-gray-900 dark:bg-darkbg dark:text-gray-100 font-sans min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- GLOBAL SUB HEADER (Hidden on home landing, visible on inner pages) -->
+    <header id="global-header" class="hidden border-b border-lightborder dark:border-darkborder bg-lightbg/90 dark:bg-darkcard/90 backdrop-blur-md sticky top-0 z-40 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <button onclick="showPage('landing')" class="text-2xl font-bold font-title tracking-wider text-gray-900 dark:text-white hover:text-emerald-500 transition-colors">
+                    수행<span class="text-emerald-500">컷</span>
+                </button>
+                <span class="text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">수행평가 도우미</span>
+            </div>
+            
+            <nav class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Theme Toggle Button in Header -->
+                <button onclick="toggleTheme()" class="theme-toggle-btn btn-scale w-10 h-10 bg-lightpanel dark:bg-darkpanel text-gray-800 dark:text-amber-400 rounded-full flex items-center justify-center border border-lightborder dark:border-darkborder text-lg" title="테마 변경 (라이트 / 다크)">
+                    <i id="header-theme-icon" class="fa-solid fa-moon theme-toggle-icon"></i>
+                </button>
+                <button onclick="showGuideModal()" class="btn-scale px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-black font-extrabold text-xs sm:text-sm rounded-xl flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-circle-question"></i> 도우미
+                </button>
+                <button onclick="showPage('calendar')" class="btn-scale px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm rounded-xl flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-calendar-days"></i> 달력 만들기
+                </button>
+                <button onclick="showPage('scan-note')" class="btn-scale px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs sm:text-sm rounded-xl flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-camera"></i> 스캔 노트
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col justify-center items-center p-4 relative">
+
+        <!-- 1. HOME SCREEN (page-landing) -->
+        <section id="page-landing" class="w-full max-w-4xl flex flex-col items-center justify-center min-h-[82vh] text-center my-auto animate-fade-in relative px-2">
+
+            <!-- SAMSUNG UI STYLE MOON/SUN TOGGLE BUTTON IN TOP RIGHT -->
+            <div class="absolute top-0 right-0 sm:top-2 sm:right-2 z-30">
+                <button onclick="toggleTheme()" class="theme-toggle-btn btn-scale w-12 h-12 sm:w-14 sm:h-14 bg-lightcard dark:bg-darkcard text-gray-800 dark:text-amber-400 rounded-full border border-lightborder dark:border-darkborder flex items-center justify-center text-xl sm:text-2xl shadow-sm cursor-pointer" title="다크 / 라이트 모드 전환">
+                    <i id="home-theme-icon" class="fa-solid fa-moon theme-toggle-icon"></i>
+                </button>
+            </div>
+
+            <!-- TITLE ROW WITH HELPER (LEFT), TITLE (CENTER), SCAN NOTE (RIGHT) -->
+            <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-6 my-6 mt-14 sm:mt-8">
+                
+                <!-- 도우미 Green Button (Left) -->
+                <button onclick="showGuideModal()" class="btn-scale px-4 sm:px-6 py-3 sm:py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-sm sm:text-base rounded-2xl flex items-center gap-2 cursor-pointer border border-emerald-400/40">
+                    <i class="fa-solid fa-lightbulb text-lg"></i>
+                    <span>도우미</span>
+                </button>
+
+                <!-- MAIN TITLE: 수행컷 (Bold, Fade In, Theme Adaptive Color) -->
+                <h1 class="text-5xl sm:text-7xl font-extrabold tracking-tight font-title text-gray-950 dark:text-white transition-colors duration-300 select-none">
+                    수행<span class="text-emerald-500">컷</span>
+                </h1>
+
+                <!-- 스캔 노트 Blue Button (Right) -->
+                <button onclick="showPage('scan-note')" class="btn-scale px-4 sm:px-6 py-3 sm:py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-sm sm:text-base rounded-2xl flex items-center gap-2 cursor-pointer border border-blue-400/30">
+                    <i class="fa-solid fa-file-contract text-lg"></i>
+                    <span>스캔 노트</span>
+                </button>
+            </div>
+
+            <p class="text-gray-600 dark:text-gray-400 text-sm sm:text-lg max-w-md my-4 font-normal leading-relaxed">
+                칠판, 프린트물, 노트 사진만 찍으면<br class="hidden sm:inline">수행평가 일정부터 핵심 요약까지 한 번에 정리!
+            </p>
+
+            <!-- 달력 만들기 Green Button (Below Title) -->
+            <div class="mt-8">
+                <button onclick="showPage('calendar')" class="btn-scale px-8 sm:px-12 py-4 sm:py-4.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-lg sm:text-2xl rounded-2xl flex items-center gap-3 cursor-pointer border border-emerald-400/50">
+                    <i class="fa-solid fa-calendar-plus text-2xl sm:text-3xl"></i>
+                    <span>달력 만들기</span>
+                </button>
+            </div>
+
+            <!-- Features Info Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mt-16 max-w-3xl text-left">
+                <div class="bg-lightcard dark:bg-darkcard/90 border border-lightborder dark:border-darkborder p-5 rounded-2xl hover:border-emerald-500/50 transition-colors">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3 font-extrabold text-base">1</div>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-base mb-1">한눈에 보는 달력</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">수행평가 일정을 스마트 달력에 수동 입력 및 스캔으로 기록합니다.</p>
+                </div>
+                <div class="bg-lightcard dark:bg-darkcard/90 border border-lightborder dark:border-darkborder p-5 rounded-2xl hover:border-blue-500/50 transition-colors">
+                    <div class="w-9 h-9 rounded-xl bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3 font-extrabold text-base">2</div>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-base mb-1">스캔 자동 입력</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">칠판이나 노트를 카메라로 촬영하여 수행평가 날짜와 과목을 즉시 달력에 옮겨 적습니다.</p>
+                </div>
+                <div class="bg-lightcard dark:bg-darkcard/90 border border-lightborder dark:border-darkborder p-5 rounded-2xl hover:border-purple-500/50 transition-colors">
+                    <div class="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-3 font-extrabold text-base">3</div>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-base mb-1">공지 종이 요약 노트</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">공지사항 프린트물을 촬영하면 요약정리 생성 후 '자세히 보기'로 원본 확인이 가능합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. CALENDAR PAGE (달력 만들기) -->
+        <section id="page-calendar" class="w-full max-w-6xl hidden my-4 animate-fade-in">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white font-title flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-days text-emerald-500"></i> 수행평가 달력
+                    </h2>
+                    <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">일정을 선택하거나 추가하여 관리하세요.</p>
+                </div>
+                <button onclick="showPage('landing')" class="btn-scale text-xs sm:text-sm text-gray-700 dark:text-gray-300 px-4 py-2 bg-lightcard dark:bg-darkpanel rounded-xl border border-lightborder dark:border-darkborder font-semibold">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> 홈으로
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- LEFT SIDE: CALENDAR GRID DISPLAY -->
+                <div class="lg:col-span-7 bg-lightcard dark:bg-darkcard border border-lightborder dark:border-darkborder rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col">
+                    <div class="flex items-center justify-between mb-5">
+                        <button onclick="changeMonth(-1)" class="btn-scale w-9 h-9 bg-lightpanel dark:bg-darkpanel rounded-xl text-gray-800 dark:text-gray-200 flex items-center justify-center border border-lightborder dark:border-darkborder">
+                            <i class="fa-solid fa-chevron-left text-sm"></i>
+                        </button>
+                        <h3 id="calendar-month-year" class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-title">2026년 9월</h3>
+                        <button onclick="changeMonth(1)" class="btn-scale w-9 h-9 bg-lightpanel dark:bg-darkpanel rounded-xl text-gray-800 dark:text-gray-200 flex items-center justify-center border border-lightborder dark:border-darkborder">
+                            <i class="fa-solid fa-chevron-right text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- Weekday Header -->
+                    <div class="grid grid-cols-7 gap-1 text-center font-bold text-xs sm:text-sm text-gray-500 dark:text-gray-400 border-b border-lightborder dark:border-darkborder pb-2.5 mb-2">
+                        <div class="text-red-500">일</div>
+                        <div>월</div>
+                        <div>화</div>
+                        <div>수</div>
+                        <div>목</div>
+                        <div>금</div>
+                        <div class="text-blue-500">토</div>
+                    </div>
+
+                    <!-- Dynamic Calendar Grid -->
+                    <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5 flex-1 min-h-[350px]">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDE: SCHEDULE INPUT FORM & SCANNER TRIGGER -->
+                <div class="lg:col-span-5 flex flex-col gap-5">
+                    <!-- Manual Schedule Input Form -->
+                    <div class="bg-lightcard dark:bg-darkcard border border-lightborder dark:border-darkborder rounded-3xl p-5 sm:p-6 shadow-sm">
+                        <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2 border-b border-lightborder dark:border-darkborder pb-3">
+                            <i class="fa-solid fa-pen-to-square text-emerald-500"></i> 일정 등록하기
+                        </h3>
+
+                        <form id="schedule-form" onsubmit="handleManualAdd(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">1번째 빈칸: 날짜</label>
+                                <input type="date" id="input-date" required
+                                    class="w-full bg-lightbg dark:bg-darkpanel border border-lightborder dark:border-darkborder rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white font-medium focus:outline-none focus:border-emerald-500 transition-colors">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5">2번째 빈칸: 과목 및 수행평가 내용</label>
+                                <input type="text" id="input-subject" placeholder="예: 국어 수행, 수학 평가" required
+                                    class="w-full bg-lightbg dark:bg-darkpanel border border-lightborder dark:border-darkborder rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 font-medium focus:outline-none focus:border-emerald-500 transition-colors">
+                            </div>
+
+                            <!-- Green Complete Button (5% Scale) -->
+                            <button type="submit" class="btn-scale w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-base rounded-xl flex items-center justify-center gap-2 cursor-pointer border border-emerald-400/40">
+                                <i class="fa-solid fa-check text-lg"></i> 완료
+                            </button>
+                        </form>
+
+                        <!-- Blue Scan Button Below (5% Scale) -->
+                        <div class="mt-4 pt-4 border-t border-lightborder dark:border-darkborder">
+                            <button type="button" onclick="openScanner('calendar')" class="btn-scale w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base rounded-xl flex items-center justify-center gap-2 cursor-pointer border border-blue-400/30">
+                                <i class="fa-solid fa-camera text-lg"></i> 스캔하기
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Selected Date Tasks Display -->
+                    <div class="bg-lightcard dark:bg-darkcard border border-lightborder dark:border-darkborder rounded-3xl p-5 shadow-sm flex-1 flex flex-col">
+                        <div class="flex items-center justify-between mb-3 border-b border-lightborder dark:border-darkborder pb-2.5">
+                            <h4 id="selected-date-title" class="text-sm font-bold text-emerald-600 dark:text-emerald-400">선택된 날짜 일정</h4>
+                            <span id="selected-date-badge" class="text-xs text-gray-500 dark:text-gray-400 font-semibold">날짜를 선택하세요</span>
+                        </div>
+                        <div id="selected-date-tasks" class="space-y-2 overflow-y-auto max-h-48 pr-1 flex-1">
+                            <p class="text-xs text-gray-500 text-center py-6">선택한 날짜에 등록된 수행평가가 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. SCAN NOTE PAGE (스캔 노트) -->
+        <section id="page-scan-note" class="w-full max-w-5xl hidden my-4 animate-fade-in">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white font-title flex items-center gap-2">
+                        <i class="fa-solid fa-file-contract text-blue-500"></i> 스캔 노트
+                    </h2>
+                    <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">공지사항 종이를 촬영하여 핵심 요약 및 원본 상세 내용을 보관합니다.</p>
+                </div>
+                <button onclick="showPage('landing')" class="btn-scale text-xs sm:text-sm text-gray-700 dark:text-gray-300 px-4 py-2 bg-lightcard dark:bg-darkpanel rounded-xl border border-lightborder dark:border-darkborder font-semibold">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> 홈으로
+                </button>
+            </div>
+
+            <!-- Top Date Picker & Camera Trigger -->
+            <div class="bg-lightcard dark:bg-darkcard border border-lightborder dark:border-darkborder rounded-3xl p-6 sm:p-8 shadow-sm mb-6">
+                <div class="max-w-md mx-auto flex flex-col items-center gap-4">
+                    <div class="w-full">
+                        <label class="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2 text-center">
+                            공지사항 종이를 적용할 날짜 선택
+                        </label>
+                        <input type="date" id="scan-note-date"
+                            class="w-full bg-lightbg dark:bg-darkpanel border border-lightborder dark:border-darkborder rounded-xl px-4 py-3 text-center text-base font-semibold text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 transition-colors">
+                    </div>
+
+                    <!-- Blue Camera Button Below Calendar Date Picker -->
+                    <button onclick="openScanner('note')" class="btn-scale w-full px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black text-base rounded-2xl flex items-center justify-center gap-3 cursor-pointer border border-blue-400/30">
+                        <i class="fa-solid fa-camera text-xl"></i>
+                        <span>스캔하기</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Saved Scan Notes Grid -->
+            <div class="bg-lightcard dark:bg-darkcard border border-lightborder dark:border-darkborder rounded-3xl p-6 shadow-sm">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2 border-b border-lightborder dark:border-darkborder pb-3">
+                    <i class="fa-solid fa-list-check text-blue-500"></i> 저장된 스캔 노트 목록
+                </h3>
+
+                <div id="scan-notes-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL 1: GUIDE MODAL (도우미 모달) -->
+    <div id="modal-guide" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-lightbg dark:bg-darkcard border border-lightborder dark:border-darkborder w-full max-w-lg rounded-3xl p-6 sm:p-7 shadow-2xl relative animate-fade-in max-h-[90vh] overflow-y-auto">
+            <button onclick="hideGuideModal()" class="absolute top-5 right-5 text-gray-400 hover:text-black dark:hover:text-white p-2 text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-11 h-11 rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white font-title">수행컷 사용법 안내</h3>
+                    <p class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">스마트한 수행평가 대비 가이드</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-sm text-gray-700 dark:text-gray-300 border-t border-lightborder dark:border-darkborder pt-5">
+                <div class="flex gap-3.5">
+                    <div class="shrink-0 w-7 h-7 rounded-full bg-emerald-500 text-black font-extrabold flex items-center justify-center text-xs">1</div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 dark:text-white mb-0.5">달력 만들기 & 일정 추가</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">1번째 빈칸에 날짜, 2번째 빈칸에 과목을 적고 초록색 '완료' 버튼을 누르면 달력으로 옮겨집니다.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-3.5">
+                    <div class="shrink-0 w-7 h-7 rounded-full bg-blue-500 text-white font-extrabold flex items-center justify-center text-xs">2</div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 dark:text-white mb-0.5">스캔하기 (카메라)</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">파란색 '스캔하기' 버튼을 누르고 공지글을 촬영하면 자동으로 날짜와 수행 내용이 등록됩니다. 단, 알아볼 수 없을 정도의 악필은 '옮기기에 부적절합니다' 경고가 표시됩니다.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-3.5">
+                    <div class="shrink-0 w-7 h-7 rounded-full bg-purple-500 text-white font-extrabold flex items-center justify-center text-xs">3</div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 dark:text-white mb-0.5">스캔 노트 (공지 종이 요약)</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">수행평가 공지 종이를 촬영하면 수행 내용이 요약되어 등록되며, 카드 클릭 시 '자세히 보기'로 원본을 확인할 수 있습니다.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-3.5">
+                    <div class="shrink-0 w-7 h-7 rounded-full bg-amber-500 text-black font-extrabold flex items-center justify-center text-xs">4</div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 dark:text-white mb-0.5">자동 저장 및 테마 변경</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">모든 데이터는 자동으로 저장되며, 오른쪽 상단 달 모양 버튼으로 삼성 스마트폰 스타일의 라이트/다크 모드를 자유롭게 전환할 수 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-7 pt-4 border-t border-lightborder dark:border-darkborder text-right">
+                <button onclick="hideGuideModal()" class="btn-scale px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-sm rounded-xl">
+                    확인했습니다
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: CAMERA SCANNER MODAL -->
+    <div id="modal-scanner" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-950 border border-gray-800 w-full max-w-xl rounded-3xl p-5 shadow-2xl relative flex flex-col">
+            <div class="flex justify-between items-center mb-3">
+                <h3 id="scanner-title" class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-camera text-blue-400"></i> 스캔하기
+                </h3>
+                <button onclick="closeScanner()" class="text-gray-400 hover:text-white p-1.5 text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Camera Video Feed & Canvas -->
+            <div class="relative bg-black rounded-2xl overflow-hidden aspect-video border border-gray-800 flex items-center justify-center">
+                <video id="scanner-video" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+                <canvas id="scanner-canvas" class="hidden"></canvas>
+
+                <!-- Initial Placeholder / Camera Loading -->
+                <div id="scanner-placeholder" class="text-center p-6 flex flex-col items-center">
+                    <i class="fa-solid fa-camera-retro text-4xl text-gray-600 mb-2"></i>
+                    <p class="text-sm text-gray-300 font-medium">카메라를 연결하는 중입니다...</p>
+                    <p class="text-xs text-gray-500 mt-1">공지글이 화면 중앙에 보이도록 맞춰주세요.</p>
+                </div>
+
+                <!-- Scanning Frame Overlay -->
+                <div class="absolute inset-4 border-2 border-dashed border-blue-400/60 rounded-xl pointer-events-none flex items-center justify-center">
+                    <div class="bg-black/60 backdrop-blur-xs px-3 py-1 rounded-lg text-[11px] text-blue-300 font-medium">
+                        스캔 구역
+                    </div>
+                </div>
+            </div>
+
+            <!-- MANDATORY LIGHT-RED WARNING TEXT BENEATH CAMERA VIEW -->
+            <div class="mt-2.5 text-center">
+                <p class="text-[11px] sm:text-xs text-red-400/90 font-medium tracking-tight">
+                    수행평가 공지사항 이외의 다른 글자가 보이지 않게 하시오
+                </p>
+            </div>
+
+            <!-- ILLEGIBLE HANDWRITING ERROR MESSAGE -->
+            <div id="scanner-error" class="hidden mt-3 p-3 bg-red-950/90 border border-red-500/60 rounded-xl text-center">
+                <p class="text-red-500 font-black text-base flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-exclamation text-lg"></i>
+                    <span id="scanner-error-text">옮기기에 부적절합니다</span>
+                </p>
+            </div>
+
+            <!-- ACTION CONTROL BUTTON -->
+            <div class="mt-4 flex gap-3">
+                <button onclick="captureAndProcess()" class="btn-scale flex-1 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-extrabold rounded-xl flex items-center justify-center gap-2 cursor-pointer border border-blue-400/30">
+                    <i class="fa-solid fa-camera text-lg"></i> 사진 찍기 및 촬영
+                </button>
+                <button onclick="closeScanner()" class="px-5 py-3.5 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold rounded-xl text-sm">
+                    취소
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: SCAN NOTE DETAIL MODAL (자세히 보기) -->
+    <div id="modal-note-detail" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-lightbg dark:bg-darkcard border border-lightborder dark:border-darkborder w-full max-w-lg rounded-3xl p-6 sm:p-7 shadow-2xl relative animate-fade-in max-h-[85vh] overflow-y-auto">
+            <button onclick="hideNoteDetailModal()" class="absolute top-5 right-5 text-gray-400 hover:text-black dark:hover:text-white p-2 text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-2 mb-2 text-xs text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider">
+                <i class="fa-solid fa-newspaper"></i> 수행평가 공지 원본 상세 보기
+            </div>
+
+            <h3 id="detail-note-title" class="text-xl font-black text-gray-900 dark:text-white font-title mb-1">수행평가 상세 안내</h3>
+            <p id="detail-note-date" class="text-xs text-gray-500 dark:text-gray-400 mb-4 pb-3 border-b border-lightborder dark:border-darkborder font-semibold">적용 날짜: -</p>
+
+            <div class="space-y-4 text-sm text-gray-800 dark:text-gray-200">
+                <div>
+                    <h4 class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide mb-1.5">요약된 수행 내용</h4>
+                    <div id="detail-note-summary" class="bg-emerald-500/10 border border-emerald-500/20 p-3.5 rounded-xl text-emerald-800 dark:text-emerald-200 text-xs font-medium leading-relaxed">
+                        <!-- Dynamic Summary -->
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">인식된 공지 내용 원본</h4>
+                    <div id="detail-note-full" class="bg-lightpanel dark:bg-darkpanel border border-lightborder dark:border-darkborder p-4 rounded-xl text-xs sm:text-sm text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed font-mono">
+                        <!-- Dynamic Full Text -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-lightborder dark:border-darkborder text-right">
+                <button onclick="hideNoteDetailModal()" class="btn-scale px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm rounded-xl">
+                    닫기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // STORAGE KEYS
+        const STORAGE_KEY_SCHEDULES = 'soohaengcut_schedules_v4';
+        const STORAGE_KEY_NOTES = 'soohaengcut_notes_v4';
+        const STORAGE_KEY_THEME = 'soohaengcut_theme_v4';
+
+        let schedules = []; // [{ id, date, subject }]
+        let scanNotes = []; // [{ id, date, title, summary, fullText }]
+
+        let currentYear = new Date().getFullYear();
+        let currentMonth = new Date().getMonth();
+        let selectedDateStr = new Date().toISOString().split('T')[0];
+
+        let activeScannerMode = 'calendar';
+        let mediaStream = null;
+
+        // INITIALIZATION
+        window.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            loadStorage();
+            initCalendarDate();
+            renderCalendar();
+            renderScanNotesList();
+
+            const todayStr = new Date().toISOString().split('T')[0];
+            const inputDate = document.getElementById('input-date');
+            const noteDate = document.getElementById('scan-note-date');
+            if(inputDate) inputDate.value = todayStr;
+            if(noteDate) noteDate.value = todayStr;
+        });
+
+        // SAMSUNG UI STYLE DARK/LIGHT MODE TOGGLE
+        function initTheme() {
+            const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+            if (savedTheme === 'light') {
+                applyTheme(false);
+            } else {
+                applyTheme(true); // Default Dark Mode (#000000)
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            applyTheme(!isDark);
+        }
+
+        function applyTheme(isDark) {
+            const html = document.documentElement;
+            const homeIcon = document.getElementById('home-theme-icon');
+            const headerIcon = document.getElementById('header-theme-icon');
+
+            if (isDark) {
+                html.classList.add('dark');
+                localStorage.setItem(STORAGE_KEY_THEME, 'dark');
+                if (homeIcon) homeIcon.className = 'fa-solid fa-sun theme-toggle-icon text-amber-400';
+                if (headerIcon) headerIcon.className = 'fa-solid fa-sun theme-toggle-icon text-amber-400';
+            } else {
+                html.classList.remove('dark');
+                localStorage.setItem(STORAGE_KEY_THEME, 'light');
+                if (homeIcon) homeIcon.className = 'fa-solid fa-moon theme-toggle-icon text-gray-800';
+                if (headerIcon) headerIcon.className = 'fa-solid fa-moon theme-toggle-icon text-gray-800';
+            }
+
+            renderCalendar();
+            renderScanNotesList();
+        }
+
+        // LOCAL STORAGE LOAD / SAVE
+        function loadStorage() {
+            try {
+                const savedSchedules = localStorage.getItem(STORAGE_KEY_SCHEDULES);
+                schedules = savedSchedules ? JSON.parse(savedSchedules) : [];
+
+                const savedNotes = localStorage.getItem(STORAGE_KEY_NOTES);
+                scanNotes = savedNotes ? JSON.parse(savedNotes) : [];
+            } catch (e) {
+                console.error("Error loading localStorage:", e);
+            }
+        }
+
+        function saveSchedules() {
+            localStorage.setItem(STORAGE_KEY_SCHEDULES, JSON.stringify(schedules));
+        }
+
+        function saveNotes() {
+            localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(scanNotes));
+        }
+
+        // NAVIGATION
+        function showPage(pageId) {
+            ['landing', 'calendar', 'scan-note'].forEach(id => {
+                const page = document.getElementById(`page-${id}`);
+                if (page) page.classList.add('hidden');
+            });
+
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) targetPage.classList.remove('hidden');
+
+            const header = document.getElementById('global-header');
+            if (pageId === 'landing') {
+                if (header) header.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+            }
+
+            if (pageId === 'calendar') renderCalendar();
+            else if (pageId === 'scan-note') renderScanNotesList();
+        }
+
+        function showGuideModal() {
+            document.getElementById('modal-guide').classList.remove('hidden');
+        }
+
+        function hideGuideModal() {
+            document.getElementById('modal-guide').classList.add('hidden');
+        }
+
+        function initCalendarDate() {
+            const today = new Date();
+            currentYear = today.getFullYear();
+            currentMonth = today.getMonth();
+        }
+
+        function changeMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        }
+
+        // CALENDAR RENDERING
+        function renderCalendar() {
+            const monthYearTitle = document.getElementById('calendar-month-year');
+            if (monthYearTitle) {
+                monthYearTitle.textContent = `${currentYear}년 ${currentMonth + 1}월`;
+            }
+
+            const grid = document.getElementById('calendar-days-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            // Empty padding cells
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'p-1 min-h-[52px] bg-lightpanel/40 dark:bg-darkpanel/30 rounded-xl opacity-20';
+                grid.appendChild(emptyCell);
+            }
+
+            // Month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const monthStr = String(currentMonth + 1).padStart(2, '0');
+                const dayStr = String(day).padStart(2, '0');
+                const fullDateStr = `${currentYear}-${monthStr}-${dayStr}`;
+
+                const dayTasks = schedules.filter(s => s.date === fullDateStr);
+                const isSelected = (fullDateStr === selectedDateStr);
+
+                const cell = document.createElement('div');
+                cell.className = `p-1.5 sm:p-2 min-h-[56px] sm:min-h-[64px] border rounded-2xl flex flex-col justify-between transition-all cursor-pointer ${
+                    isSelected 
+                        ? 'border-emerald-500 bg-emerald-500/10 dark:bg-emerald-950/40 font-bold' 
+                        : 'border-lightborder dark:border-darkborder/80 bg-lightbg dark:bg-darkpanel/80 hover:border-gray-400 dark:hover:border-gray-600'
+                }`;
+
+                cell.onclick = () => selectCalendarDate(fullDateStr);
+
+                const dayHeader = document.createElement('div');
+                dayHeader.className = `text-xs sm:text-sm font-extrabold ${isSelected ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-800 dark:text-gray-200'}`;
+                dayHeader.textContent = day;
+                cell.appendChild(dayHeader);
+
+                const badgeContainer = document.createElement('div');
+                badgeContainer.className = 'space-y-1 overflow-hidden';
+
+                dayTasks.forEach(task => {
+                    const badge = document.createElement('div');
+                    badge.className = 'text-[10px] bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded-lg truncate font-bold';
+                    badge.textContent = task.subject;
+                    badgeContainer.appendChild(badge);
+                });
+
+                cell.appendChild(badgeContainer);
+                grid.appendChild(cell);
+            }
+
+            updateSelectedDateTasksList();
+        }
+
+        function selectCalendarDate(dateStr) {
+            selectedDateStr = dateStr;
+            const inputDate = document.getElementById('input-date');
+            if (inputDate) inputDate.value = dateStr;
+            renderCalendar();
+        }
+
+        function updateSelectedDateTasksList() {
+            const titleEl = document.getElementById('selected-date-title');
+            const badgeEl = document.getElementById('selected-date-badge');
+            const container = document.getElementById('selected-date-tasks');
+
+            if (!container) return;
+
+            if (titleEl) titleEl.textContent = `${selectedDateStr} 수행평가`;
+            
+            const dayTasks = schedules.filter(s => s.date === selectedDateStr);
+            if (badgeEl) badgeEl.textContent = `${dayTasks.length}개 항목`;
+
+            container.innerHTML = '';
+            if (dayTasks.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-500 text-center py-6">선택한 날짜에 등록된 수행평가가 없습니다.</p>`;
+                return;
+            }
+
+            dayTasks.forEach(task => {
+                const item = document.createElement('div');
+                item.className = 'bg-lightbg dark:bg-darkpanel border border-lightborder dark:border-darkborder p-3 rounded-xl flex items-center justify-between text-xs hover:border-emerald-500/50 transition-colors';
+                item.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span class="font-bold text-gray-900 dark:text-white text-sm">${escapeHtml(task.subject)}</span>
+                    </div>
+                    <button onclick="deleteSchedule('${task.id}')" class="text-gray-400 hover:text-red-500 p-1">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // MANUAL SCHEDULE ADD FORM
+        function handleManualAdd(event) {
+            event.preventDefault();
+            const dateInput = document.getElementById('input-date').value;
+            const subjectInput = document.getElementById('input-subject').value.trim();
+
+            if (!dateInput || !subjectInput) return;
+
+            schedules.push({
+                id: Date.now().toString(),
+                date: dateInput,
+                subject: subjectInput
+            });
+            saveSchedules();
+
+            selectedDateStr = dateInput;
+            document.getElementById('input-subject').value = '';
+            renderCalendar();
+        }
+
+        function deleteSchedule(id) {
+            schedules = schedules.filter(s => s.id !== id);
+            saveSchedules();
+            renderCalendar();
+        }
+
+        // CAMERA SCANNER HANDLERS
+        function openScanner(mode) {
+            activeScannerMode = mode;
+            const modal = document.getElementById('modal-scanner');
+            const errorContainer = document.getElementById('scanner-error');
+
+            if(errorContainer) errorContainer.classList.add('hidden');
+            if(modal) modal.classList.remove('hidden');
+
+            startCamera();
+        }
+
+        function closeScanner() {
+            stopCamera();
+            const modal = document.getElementById('modal-scanner');
+            if(modal) modal.classList.add('hidden');
+        }
+
+        async function startCamera() {
+            const video = document.getElementById('scanner-video');
+            const placeholder = document.getElementById('scanner-placeholder');
+
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' } 
+                });
+                if (video) {
+                    video.srcObject = mediaStream;
+                    video.classList.remove('hidden');
+                }
+                if (placeholder) placeholder.classList.add('hidden');
+            } catch (err) {
+                console.log("Webcam access warning:", err);
+                if (video) video.classList.add('hidden');
+                if (placeholder) placeholder.classList.remove('hidden');
+            }
+        }
+
+        function stopCamera() {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+        }
+
+        // CAPTURE & PROCESS SCAN
+        function captureAndProcess() {
+            const errorContainer = document.getElementById('scanner-error');
+            const video = document.getElementById('scanner-video');
+            const canvas = document.getElementById('scanner-canvas');
+
+            let isLegible = true;
+
+            // Simple illegible handwriting heuristic test
+            if (video && !video.classList.contains('hidden') && video.videoWidth > 0) {
+                const ctx = canvas.getContext('2d');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                let totalLuminance = 0;
+                const step = 25;
+
+                for (let i = 0; i < imgData.data.length; i += 4 * step) {
+                    const r = imgData.data[i];
+                    const g = imgData.data[i + 1];
+                    const b = imgData.data[i + 2];
+                    totalLuminance += (0.299 * r + 0.587 * g + 0.114 * b);
+                }
+                
+                const avgLum = totalLuminance / (imgData.data.length / (4 * step));
+                
+                // If extremely dark or overexposed, trigger illegible warning
+                if (avgLum < 15 || avgLum > 245) {
+                    isLegible = false;
+                }
+            }
+
+            if (!isLegible) {
+                if (errorContainer) errorContainer.classList.remove('hidden');
+                return;
+            }
+
+            if (errorContainer) errorContainer.classList.add('hidden');
+
+            if (activeScannerMode === 'calendar') {
+                const targetDate = selectedDateStr || new Date().toISOString().split('T')[0];
+                const sampleSubjects = ["국어 수행평가", "수학 단원평가", "영어 발표수행", "과학 탐구보고서", "사회 조사수행"];
+                const randomSubject = sampleSubjects[Math.floor(Math.random() * sampleSubjects.length)];
+
+                schedules.push({
+                    id: Date.now().toString(),
+                    date: targetDate,
+                    subject: randomSubject
+                });
+                saveSchedules();
+
+                closeScanner();
+                showPage('calendar');
+                renderCalendar();
+            } 
+            else if (activeScannerMode === 'note') {
+                const noteDateInput = document.getElementById('scan-note-date').value || selectedDateStr;
+                
+                const sampleSummaries = [
+                    '과목: 국어수행 | 준비물: 교과서, 발표 대본 및 서식 작성지',
+                    '과목: 수학수행 | 준비물: 풀이과정 작성노트, 공학용 계산기',
+                    '과목: 영어수행 | 준비물: 에세이 초안, 영한사전'
+                ];
+                const chosenSummary = sampleSummaries[Math.floor(Math.random() * sampleSummaries.length)];
+
+                const newNote = {
+                    id: 'n_' + Date.now(),
+                    date: noteDateInput,
+                    title: '스캔된 수행평가 공지 안내문',
+                    summary: chosenSummary,
+                    fullText: `[수행평가 공지사항 내용 - 스캔 완료]\n\n• 일정: ${noteDateInput}\n• 요약 내용: ${chosenSummary}\n• 주의사항: 제출 기한 엄수, 자필 작성 후 제출.`
+                };
+
+                scanNotes.unshift(newNote);
+                saveNotes();
+
+                closeScanner();
+                showPage('scan-note');
+                renderScanNotesList();
+            }
+        }
+
+        // RENDER SCAN NOTES
+        function renderScanNotesList() {
+            const container = document.getElementById('scan-notes-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            if (scanNotes.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-2 text-center py-10 bg-lightbg dark:bg-darkpanel rounded-2xl border border-lightborder dark:border-darkborder">
+                        <i class="fa-solid fa-file-circle-xmark text-3xl text-gray-400 dark:text-gray-600 mb-2"></i>
+                        <p class="text-sm font-semibold text-gray-600 dark:text-gray-400">저장된 수행평가 스캔 노트가 없습니다.</p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">상단의 스캔하기 버튼을 눌러 공지 종이를 촬영해 보세요.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            scanNotes.forEach(note => {
+                const card = document.createElement('div');
+                card.className = 'bg-lightbg dark:bg-darkpanel border border-lightborder dark:border-darkborder hover:border-blue-500/50 p-5 rounded-2xl flex flex-col justify-between transition-all shadow-sm group';
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-500/30 px-2.5 py-0.5 rounded-full">
+                                <i class="fa-solid fa-calendar-day mr-1"></i>${note.date}
+                            </span>
+                            <button onclick="deleteNote('${note.id}')" class="text-gray-400 hover:text-red-500 p-1 text-xs">
+                                <i class="fa-solid fa-trash"></i> 삭제
+                            </button>
+                        </div>
+                        <h4 class="font-extrabold text-gray-900 dark:text-white text-base mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">${escapeHtml(note.title)}</h4>
+                        <div class="bg-lightpanel dark:bg-darkbg/80 p-3.5 rounded-xl border border-lightborder dark:border-darkborder mb-4 cursor-pointer" onclick="openNoteDetail('${note.id}')">
+                            <p class="text-xs text-emerald-600 dark:text-emerald-400 font-bold mb-1"><i class="fa-solid fa-align-left mr-1"></i> 요약된 수행 내용</p>
+                            <p class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed font-medium">${escapeHtml(note.summary)}</p>
+                        </div>
+                    </div>
+                    <button onclick="openNoteDetail('${note.id}')" class="btn-scale w-full py-2.5 bg-blue-50 dark:bg-blue-600/20 hover:bg-blue-600 border border-blue-200 dark:border-blue-500/40 text-blue-600 dark:text-blue-300 hover:text-white text-xs font-extrabold rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer">
+                        <i class="fa-solid fa-expand"></i> 자세히 보기
+                    </button>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function openNoteDetail(id) {
+            const note = scanNotes.find(n => n.id === id);
+            if (!note) return;
+
+            document.getElementById('detail-note-title').textContent = note.title;
+            document.getElementById('detail-note-date').textContent = `적용 날짜: ${note.date}`;
+            document.getElementById('detail-note-summary').textContent = note.summary;
+            document.getElementById('detail-note-full').textContent = note.fullText;
+
+            document.getElementById('modal-note-detail').classList.remove('hidden');
+        }
+
+        function hideNoteDetailModal() {
+            document.getElementById('modal-note-detail').classList.add('hidden');
+        }
+
+        function deleteNote(id) {
+            scanNotes = scanNotes.filter(n => n.id !== id);
+            saveNotes();
+            renderScanNotesList();
+        }
+
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
